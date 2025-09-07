@@ -1,0 +1,22 @@
+
+/* start cart  */
+.home-cart button
+{
+    background-color: var(--main-color);
+    color: white;
+}
+.home-cart button:hover
+{
+    background-color: #d6a300;
+    color: white;
+}
+.input-group-text
+{
+    background-color: var(--navbar-color);
+}
+
+/* start show product */
+
+
+
+/* end show product */

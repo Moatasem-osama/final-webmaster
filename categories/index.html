@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>categories</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container w-100">
+        <select name="category" class="form-select my-3" id="selectCategory">
+          <option value="">-- اختر تصنيف --</option>
+        </select>
+        <div class="row g-3" id="cards"></div>
+      </div>
+    </header>
+
+    <script>
+      const selectTag = document.getElementById("selectCategory");
+      const container = document.getElementById("cards");
+
+      // تحميل التصنيفات
+      async function selectCategory() {
+        let response = await fetch("https://dummyjson.com/products/categories");
+        let categories = await response.json();
+
+        selectTag.innerHTML += categories
+          .map((cat) => `<option value="${cat.url}">${cat.name}</option>`)
+          .join("");
+
+        // نخلي Beauty افتراضي
+        let beauty = categories.find(cat => cat.slug === "beauty");
+        if (beauty) {
+          selectTag.value = beauty.url;
+          loadProducts(beauty.url);
+        }
+      }
+
+      // تحميل المنتجات لأي تصنيف
+      async function loadProducts(url) {
+        let response = await fetch(url);
+        let data = await response.json();
+        let products = data.products;
+
+        container.innerHTML = products
+          .map(
+            (product) => `
+          <div class="col-lg-4 col-md-6">
+            <div class="card h-100">
+              <img src="${product.thumbnail}" class="card-img-top" alt="${product.title}" />
+              <div class="card-body">
+                <h5 class="card-title">${product.title}</h5>
+                <p class="card-text">${product.description}</p>
+                <p class="fw-bold">💲 ${product.price} USD</p>
+                <a href="#" class="btn btn-primary">View</a>
+              </div>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      // عند تغيير الاختيار
+      selectTag.addEventListener("change", () => {
+        if (selectTag.value) loadProducts(selectTag.value);
+      });
+
+      // أول تحميل
+      selectCategory();
+    </script>
+  </body>
+</html>
