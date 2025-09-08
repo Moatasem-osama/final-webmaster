@@ -21,7 +21,6 @@ Promise.all([
 
     // Combine both categories
     let allProducts = [...results[0].products, ...results[1].products];
-    console.log("All products from API:", allProducts);
 
     // Filter only products containing allowed keywords in title
     let filtered = allProducts.filter((product) =>
@@ -66,3 +65,31 @@ Promise.all([
     });
   })
   .catch((err) => console.error("Error fetching products:", err));
+
+document.addEventListener("DOMContentLoaded", () => {
+  const usernameSpan = document.getElementById("username");
+  if (!usernameSpan) return;
+
+  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    // Look up full user data from users array
+    const users = JSON.parse(localStorage.getItem("user")) || [];
+    const fullUser = users.find(u => u.userEmail === loggedInUser.email);
+
+    if (fullUser) {
+      usernameSpan.textContent = fullUser.userName;
+    } else {
+      usernameSpan.textContent = "Guest";
+    }
+  // Logout button
+  const loggedOutBtn = document.getElementById("loggedOutBtn");
+  if (JSON.parse(localStorage.getItem('loggedInUser'))) {
+    loggedOutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "../../index.html";
+    });
+  }
+  else{
+    return
+  }
+});
