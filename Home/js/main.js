@@ -70,16 +70,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const usernameSpan = document.getElementById("username");
   if (!usernameSpan) return;
 
-  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    // Look up full user data from users array
-    const users = JSON.parse(localStorage.getItem("user")) || [];
-    const fullUser = users.find(u => u.userEmail === loggedInUser.email);
+const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+if (loggedInUser) {
+  const users = JSON.parse(localStorage.getItem("user")) || [];
+  const fullUser = users.find(u => u.userEmail === loggedInUser.email);
+  usernameSpan.textContent = fullUser ? fullUser.userName : "Guest";
+} else {
+  usernameSpan.textContent = "Guest";
+}
 
-    if (fullUser) {
-      usernameSpan.textContent = fullUser.userName;
-    } else {
-      usernameSpan.textContent = "Guest";
-    }
   // Logout button
   const loggedOutBtn = document.getElementById("loggedOutBtn");
   if (JSON.parse(localStorage.getItem('loggedInUser'))) {
