@@ -66,29 +66,66 @@ Promise.all([
   })
   .catch((err) => console.error("Error fetching products:", err));
 
+// document.addEventListener("DOMContentLoaded", () => {
+//   const usernameSpan = document.getElementById("username");
+//   if (!usernameSpan) return;
+
+// const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+// if (loggedInUser) {
+//   const users = JSON.parse(localStorage.getItem("user")) || [];
+//   const fullUser = users.find(u => u.userEmail === loggedInUser.email);
+//   usernameSpan.textContent = fullUser ? fullUser.userName : "Guest";
+// } else {
+//   usernameSpan.textContent = "Guest";
+// }
+
+//   // Logout button
+//   const loggedOutBtn = document.getElementById("loggedOutBtn");
+//   if (JSON.parse(localStorage.getItem('loggedInUser'))) {
+//     loggedOutBtn.addEventListener("click", (e) => {
+//       e.preventDefault();
+//       localStorage.removeItem("loggedInUser");
+//       window.location.href = "/final-webmaster/index.html";
+//     });
+//   }
+//   else{
+//     return
+//   }
+// });
+
 document.addEventListener("DOMContentLoaded", () => {
   const usernameSpan = document.getElementById("username");
-  if (!usernameSpan) return;
-
-const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-if (loggedInUser) {
-  const users = JSON.parse(localStorage.getItem("user")) || [];
-  const fullUser = users.find(u => u.userEmail === loggedInUser.email);
-  usernameSpan.textContent = fullUser ? fullUser.userName : "Guest";
-} else {
-  usernameSpan.textContent = "Guest";
-}
-
-  // Logout button
   const loggedOutBtn = document.getElementById("loggedOutBtn");
-  if (JSON.parse(localStorage.getItem('loggedInUser'))) {
+
+  // Helper function to detect base path
+  function getBasePath() {
+    // لو انت شغال locally (127.0.0.1 أو localhost)
+    if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
+      return "/";
+    }
+    // لو شغال على GitHub Pages
+    return "/final-webmaster/";
+  }
+
+  // Show username if logged in
+  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  if (usernameSpan) {
+    if (loggedInUser) {
+      const users = JSON.parse(localStorage.getItem("user")) || [];
+      const fullUser = users.find(u => u.userEmail === loggedInUser.email);
+      usernameSpan.textContent = fullUser ? fullUser.userName : "Guest";
+    } else {
+      usernameSpan.textContent = "Guest";
+    }
+  }
+
+  // Logout logic
+  if (loggedOutBtn) {
     loggedOutBtn.addEventListener("click", (e) => {
       e.preventDefault();
       localStorage.removeItem("loggedInUser");
-      window.location.href = "/index.html";
+      // Redirect to index.html based on environment
+      window.location.href = getBasePath() + "index.html";
     });
-  }
-  else{
-    return
   }
 });
