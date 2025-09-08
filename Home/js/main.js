@@ -85,7 +85,7 @@ if (loggedInUser) {
     loggedOutBtn.addEventListener("click", (e) => {
       e.preventDefault();
       localStorage.removeItem("loggedInUser");
-      window.location.href = "../../index.html";
+      window.location.origin = "/index.html";
     });
   }
   else{
