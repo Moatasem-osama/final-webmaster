@@ -66,65 +66,38 @@ Promise.all([
   })
   .catch((err) => console.error("Error fetching products:", err));
 
-// document.addEventListener("DOMContentLoaded", () => {
-//   const usernameSpan = document.getElementById("username");
-//   if (!usernameSpan) return;
-
-// const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-// if (loggedInUser) {
-//   const users = JSON.parse(localStorage.getItem("user")) || [];
-//   const fullUser = users.find(u => u.userEmail === loggedInUser.email);
-//   usernameSpan.textContent = fullUser ? fullUser.userName : "Guest";
-// } else {
-//   usernameSpan.textContent = "Guest";
-// }
-
-//   // Logout button
-//   const loggedOutBtn = document.getElementById("loggedOutBtn");
-//   if (JSON.parse(localStorage.getItem('loggedInUser'))) {
-//     loggedOutBtn.addEventListener("click", (e) => {
-//       e.preventDefault();
-//       localStorage.removeItem("loggedInUser");
-//       window.location.href = "/final-webmaster/index.html";
-//     });
-//   }
-//   else{
-//     return
-//   }
-// });
 
 document.addEventListener("DOMContentLoaded", () => {
   const usernameSpan = document.getElementById("username");
   const loggedOutBtn = document.getElementById("loggedOutBtn");
 
-  // Helper function to detect base path
   function getBasePath() {
-    // لو انت شغال locally (127.0.0.1 أو localhost)
     if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
       return "/";
     }
-    // لو شغال على GitHub Pages
-    return "/final-webmaster/";
+    // هات أول جزء بعد الدومين (الفولدر الرئيسي بتاع المشروع)
+    const parts = location.pathname.split("/").filter(Boolean);
+    return parts.length > 0 ? `/${parts[0]}/` : "/";
   }
 
-  // Show username if logged in
   const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  const users = JSON.parse(localStorage.getItem("user")) || [];
+
   if (usernameSpan) {
     if (loggedInUser) {
-      const users = JSON.parse(localStorage.getItem("user")) || [];
       const fullUser = users.find(u => u.userEmail === loggedInUser.email);
       usernameSpan.textContent = fullUser ? fullUser.userName : "Guest";
+    } else if (users.length > 0) {
+      usernameSpan.textContent = users[users.length - 1].userName;
     } else {
       usernameSpan.textContent = "Guest";
     }
   }
 
-  // Logout logic
   if (loggedOutBtn) {
-    loggedOutBtn.addEventListener("click", (e) => {
+    loggedOutBtn.addEventListener("click", e => {
       e.preventDefault();
       localStorage.removeItem("loggedInUser");
-      // Redirect to index.html based on environment
       window.location.href = getBasePath() + "index.html";
     });
   }

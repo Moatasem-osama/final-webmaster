@@ -25,7 +25,7 @@
 
 ### 🛍️ Products
 
-* جلب المنتجات من [Fake Store API](https://dummyjson.com/docs/products).
+* جلب المنتجات من [DummyJson API](https://dummyjson.com/docs/products).
 * عرض (صورة، اسم، سعر).
 * أزرار: **Add to Cart** و **Add to Wishlist**.
 
