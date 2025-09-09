@@ -39,7 +39,7 @@
 
   #cart-container {
     width: 100% !important;
-    margin-right: 0 !important;
+    margin-inline: auto !important;
     margin-bottom: 1.5rem;
   }
 

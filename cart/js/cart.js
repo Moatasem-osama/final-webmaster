@@ -21,7 +21,7 @@ async function renderCart() {
          <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" class="w-25" alt="Empty Cart">
          <h2>Oops! Your cart is empty</h2>
          <p class="text-muted">Start adding items you love and save them for later.</p>
-        <a href="../../products/index.html" class="btn mt-3 px-4 py-2 mb-4">
+        <a href="/products/index.html" class="btn mt-3 px-4 py-2 mb-4">
           <i class="bi bi-shop me-2"></i> Continue Shopping
         </a>
     </div>`;
