@@ -1,74 +1,118 @@
- const cartContainer = document.getElementById("cart-container");
-  const subtotalEl = document.getElementById("subtotal");
-  const discountEl = document.getElementById("discount");
-  const totalEl = document.getElementById("total");
 
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+const cartContainer = document.getElementById("cart-container");
+const subtotalEl = document.getElementById("subtotal");
+const discountEl = document.getElementById("discount");
+const totalEl = document.getElementById("total");
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let appliedPromo = null; 
 
 
+cart = cart.map(item => {
+  if (!item.quantity) {
+    item.quantity = 1;
+  }
+  return item;
+});
 
-  async function renderCart() {
-    if (cart.length === 0) {
-    cartContainer.innerHTML = `
-    <div class="wishlist-empty">
-        <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" alt="Empty Cart">
-        <h2>Oops! Your cart is empty</h2>
-        <p class="text-muted">Start adding items you love and save them for later.</p>
-        <a href="shop.html" class="btn btn-primary mt-3 px-4 py-2">
+async function renderCart() {
+  if (cart.length === 0) {
+    cartContainer.innerHTML = `<div class="wishlist-empty text-center">
+         <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" class="w-25" alt="Empty Cart">
+         <h2>Oops! Your cart is empty</h2>
+         <p class="text-muted">Start adding items you love and save them for later.</p>
+        <a href="../../products/index.html" class="btn mt-3 px-4 py-2 mb-4">
           <i class="bi bi-shop me-2"></i> Continue Shopping
         </a>
     </div>`;
     subtotalEl.innerText = "$0.00";
     discountEl.innerText = "-$0.00";
     totalEl.innerText = "$0.00";
-  return;
-}
- cartContainer.innerHTML = ""; 
-    let subtotal = 0;
+    return;
+  }
 
-    // لف على كل منتج في السلة وجيبه من الـ API وعرضه
-    for (let item of cart) {
-      const product = await fetchProductById(item.id);
-      subtotal += product.price * item.quantity;
+  cartContainer.innerHTML = "";
+  let subtotal = 0;
 
-// عرض المنتجات
-const productHTML = `
-<div class="d-flex gap-3 w-100">
-  <img src="${product.image}" class="product-img" alt="">
-  <div class="w-100">
-    <div class="d-flex justify-content-between align-items-center w-100 text-top">
-      <h5 class="fw-bold">${product.title}</h5>
-      <i class="bi bi-trash me-2" onclick="removeFromCart(${item.id})"></i>
+  for (let item of cart) {
+    subtotal += item.price * item.quantity;
+
+   const productHTML = `
+  <div class="row align-items-center mb-3">
+    
+    <div class="col-3 col-md-2">
+      <img src="${item.thumbnail}" class="img-fluid rounded product-img" alt="">
     </div>
-    <p class="mb-0">Category: ${product.category}</p>
-    <p class="fw-bold" id="price-${item.id}">$${(product.price * item.quantity).toFixed(2)}</p>
 
-    <div class="d-flex align-items-center gap-2 mt-2">
-      <button class="btn btn-sm btn-outline-secondary" onclick="decreaseQuantity(${item.id})">-</button>
-      <span class="px-2" id="quantity-${item.id}">${item.quantity}</span>
-      <button class="btn btn-sm btn-outline-secondary" onclick="increaseQuantity(${item.id})">+</button>
-    </div><hr>
+    
+    <div class="col-9 col-md-10 pt-4 ps-5">
+      <div class="d-flex justify-content-between align-items-start">
+        <h5 class="fw-bold mb-1">${item.title}</h5>
+        <i class="fas fa-trash trash-icon" onclick="removeFromCart(${item.id})"></i>
+      </div>
+      <p class="fw-bold mb-2" id="price-${item.id}">$${(item.price * item.quantity).toFixed(2)}</p>
+
+      <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-sm btn-outline-secondary" onclick="decreaseQuantity(${item.id})">-</button>
+        <span class="px-2" id="quantity-${item.id}">${item.quantity}</span>
+        <button class="btn btn-sm btn-outline-secondary" onclick="increaseQuantity(${item.id})">+</button>
+      </div>
+    </div>
+    <hr class="mt-3">
   </div>
-</div>
-
 `;
 
 
-      cartContainer.innerHTML += productHTML;
-    }
-
-    const discount = subtotal * 0.2;
-    const delivery = 15;
-    const total = subtotal - discount + delivery;
-
-    subtotalEl.innerText = `$${subtotal.toFixed(2)}`;
-    discountEl.innerText = `-$${discount.toFixed(2)}`;
-    totalEl.innerText = `$${total.toFixed(2)}`;
+    cartContainer.innerHTML += productHTML;
   }
 
+  updateTotals();
+}
 
 
-// حساب الإجمالي والخصومات والتوصيل
+function removeFromCart(id) {
+  cart = cart.filter(item => item.id !== id);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
+}
+
+
+function updateProductQuantityView(id) {
+  const item = cart.find(p => p.id === id);
+  if (!item) return;
+
+  const quantitySpan = document.getElementById(`quantity-${id}`);
+  if (quantitySpan) quantitySpan.innerText = item.quantity;
+
+  const priceEl = document.getElementById(`price-${id}`);
+  if (priceEl) priceEl.innerText = `$${(item.price * item.quantity).toFixed(2)}`;
+}
+
+// زيادة الكمية
+function increaseQuantity(id) {
+  const index = cart.findIndex(item => item.id === id);
+  if (index !== -1) {
+    cart[index].quantity += 1;
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateProductQuantityView(id);
+    updateTotals();
+  }
+}
+
+
+function decreaseQuantity(id) {
+  const index = cart.findIndex(item => item.id === id);
+  if (index !== -1 && cart[index].quantity > 1) {
+    cart[index].quantity -= 1;
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateProductQuantityView(id);
+    updateTotals();
+  } else if (cart[index] && cart[index].quantity === 1) {
+    removeFromCart(id);
+  }
+}
+
+
 function updateTotals() {
   let subtotal = 0;
 
@@ -83,21 +127,18 @@ function updateTotals() {
   const delivery = 15;
   const total = subtotal - totalDiscount + delivery;
 
-  document.getElementById("subtotal").innerText = `$${subtotal.toFixed(2)}`;
-  document.getElementById("discount").innerText = `-$${totalDiscount.toFixed(2)}`;
-  document.getElementById("total").innerText = `$${total.toFixed(2)}`;
+  subtotalEl.innerText = `$${subtotal.toFixed(2)}`;
+  discountEl.innerText = `-$${totalDiscount.toFixed(2)}`;
+  totalEl.innerText = `$${total.toFixed(2)}`;
 }
-
-  renderCart();
 
 function applyPromoCode() {
   const input = document.getElementById("promo-input");
   const code = input.value.trim().toLowerCase();
   const messageEl = document.getElementById("promo-message");
 
-   // التحقق من الكود
   if (code === "shahd10") {
-    appliedPromo = 0.1; // 10% خصم
+    appliedPromo = 0.1;
     messageEl.innerText = "Promo code applied successfully! 10% off.";
     messageEl.classList.remove("text-danger");
     messageEl.classList.add("text-success");
@@ -108,5 +149,7 @@ function applyPromoCode() {
     messageEl.classList.add("text-danger");
   }
 
-  updateTotals(); // نعيد حساب الإجمالي بعد الخصم
+  updateTotals();
 }
+
+renderCart();

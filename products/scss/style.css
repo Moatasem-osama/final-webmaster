@@ -1,87 +1,45 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.card-container{
+    cursor: pointer;
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+    transition: 0.3s;
 }
-
-body {
-  font-family: "Poppins", sans-serif;
-  background-color: #f8f9fa;
+.card-container:hover {
+    transform: translateY(-5%);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
 }
-
-#selectCategory {
-  border-radius: 10px;
-  padding: 10px;
-  font-weight: 500;
-  border: 1px solid #343a40;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
+.icon{
+    cursor: pointer;
 }
-#selectCategory:hover {
-  border-color: #ffc107;
+.card-icons{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
 }
-
-/* Cards */
-#cards .col-xl-3 {
-  background: white;
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 20px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease-in-out;
+.cart-btn{
+    background-color: #826300;
+    padding: 1% 1%;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    transition: 0.3s;
 }
-#cards .col-xl-3:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+.cart-btn:hover{
+    background-color: #544000;
 }
-#cards .col-xl-3 img {
-  width: 100%;
-  height: 200px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  border-radius: 10px;
+.wishlist-btn{
+    background-color: #D6A300;
+    padding: 1% 1%;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    transition: 0.3s;
 }
-#cards .col-xl-3 h6 {
-  margin-top: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #212529;
+.wishlist-btn:hover{
+    background-color: #a07b00;
 }
-#cards .col-xl-3 p {
-  font-size: 14px;
-  color: #343a40;
+.badge{
+    position: absolute;
+    top: 0%;
+    right: 0%;
 }
-#cards .col-xl-3 .card-icons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  justify-content: space-between;
-  margin: 10px 0;
-}
-#cards .col-xl-3 .card-icons .icon {
-  background: #343a40;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  flex: 1;
-  margin: 0 5px;
-  text-align: center;
-}
-#cards .col-xl-3 .card-icons .icon:hover {
-  background: #ffc107;
-  color: #212529;
-}
-#cards .col-xl-3 a.btn {
-  width: 100%;
-  font-weight: 500;
-  border-radius: 10px;
-  transition: all 0.3s ease-in-out;
-}
-#cards .col-xl-3 a.btn:hover {
-  background: #212529;
-  color: #f8f9fa;
-}/*# sourceMappingURL=style.css.map */
