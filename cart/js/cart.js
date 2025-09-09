@@ -50,6 +50,7 @@ async function renderCart() {
         <h5 class="fw-bold mb-1">${item.title}</h5>
         <i class="fas fa-trash trash-icon" onclick="removeFromCart(${item.id})"></i>
       </div>
+      <span>Category : ${item.category}</span>
       <p class="fw-bold mb-2" id="price-${item.id}">$${(item.price * item.quantity).toFixed(2)}</p>
 
       <div class="d-flex align-items-center gap-2">
