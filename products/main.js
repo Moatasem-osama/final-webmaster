@@ -1,5 +1,6 @@
 const selectTag = document.getElementById("selectCategory");
 const container = document.getElementById("cards");
+
 // تحميل التصنيفات
 async function selectCategory() {
     let response = await fetch("https://dummyjson.com/products/categories");
@@ -19,6 +20,8 @@ async function selectCategory() {
 
 // تحميل المنتجات لأي تصنيف
 async function loadProducts(url) {
+    document.getElementById("loading").style.display = "block"; // show spinner
+    container.innerHTML = "";
     let response = await fetch(url);
     let data = await response.json();
     let products = data.products;
@@ -44,7 +47,7 @@ async function loadProducts(url) {
 
             return `
         <div class="col-xl-3 col-md-6 col-sm-6 col-12 d-flex flex-column align-items-center my-3">
-            <div id="cardContainer" class="card-container p-4 rounded position-relative">
+            <div id="cardContainer" class="card-container p-4 rounded position-relative product-card" data-id="${product.id}">
                 <img src="${product.thumbnail}" class="rounded img-fluid" alt="${product.title}" />
                 <h6 class="text-center mt-3 fw-bold">${product.title}</h6>
                 <p class="d-flex justify-content-between">
@@ -63,13 +66,43 @@ async function loadProducts(url) {
                         <i class="fa-solid fa-heart text-light"></i>
                         Add to Wishlist
                     </p>
+                  
                 </div>
                 <span class="badge bg-danger">-${Math.ceil(product.discountPercentage)}% OFF</span>
             </div>
         </div>
         `;
+
         })
+
         .join("");
+        // Model start
+    document.getElementById("loading").style.display = "none";
+
+    const productModalEl = document.getElementById("productModal");
+    const productModal = new bootstrap.Modal(productModalEl);
+
+    document.querySelectorAll(".view-details").forEach((card) => {
+        card.addEventListener("click", () => {
+            let id = card.getAttribute("data-id");
+            let product = products.find((p) => p.id == id);
+
+            document.getElementById("modalTitle").textContent = product.title;
+            document.getElementById("modalImage").src = product.thumbnail;
+            document.getElementById("modalDescription").textContent = product.description;
+            document.getElementById("modalPrice").textContent = `${product.price} $`;
+            document.getElementById("modalRating").textContent = `⭐ ${product.rating}`;
+            document.getElementById("modalBrand").textContent = `Brand: ${product.brand}`;
+            document.getElementById("modalCategory").textContent = `Category: ${product.category}`;
+            document.getElementById("modalQuantity").textContent = `Available: ${product.stock}`;
+            document.getElementById("modalMinOrder").textContent = `Minimum Order: ${product.minimumOrderQuantity}`;
+            document.getElementById("modalDimensions").textContent =
+                `Dimensions: ${product.dimensions.width} x ${product.dimensions.height} x ${product.dimensions.depth}`;
+            document.getElementById("modalCartBtn").setAttribute("data-id", product.id);
+            document.getElementById("modalWishlistBtn").setAttribute("data-id", product.id);
+            productModal.show();
+        });
+    });
 
     // ✅ إضافة الأحداث بعد عرض المنتجات
     document.querySelectorAll(".cart-btn").forEach((btn) => {
@@ -90,6 +123,7 @@ async function loadProducts(url) {
         });
     });
 
+
     document.querySelectorAll(".wishlist-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
             let id = btn.getAttribute("data-id");
@@ -107,12 +141,47 @@ async function loadProducts(url) {
             }
         });
     });
-}
 
+    // ✅ لما تضغط على الكارد يفتح تفاصيل المنتج
+    document.querySelectorAll(".product-card").forEach((card) => {
+      card.addEventListener("click", (e) => {
+        // عشان ما يفتحش المودال لو ضغطت على زر Add to Cart أو Wishlist أو View Details
+        if (e.target.closest(".cart-btn") || e.target.closest(".wishlist-btn") || e.target.closest(".view-details")) return;
+
+        let id = card.getAttribute("data-id");
+        let product = products.find((p) => p.id == id);
+
+        if (!product) return;
+
+        // نملأ بيانات المودال
+        document.getElementById("modalTitle").textContent = product.title;
+        document.getElementById("modalImage").src = product.thumbnail;
+        document.getElementById("modalDescription").textContent = product.description;
+        document.getElementById("modalPrice").textContent = `${product.price} $`;
+        document.getElementById("modalRating").textContent = `⭐ ${product.rating}`;
+        document.getElementById("modalBrand").textContent = `Brand: ${product.brand}`;
+        document.getElementById("modalCategory").textContent = `Category: ${product.category}`;
+        document.getElementById("modalQuantity").textContent = `Available: ${product.stock}`;
+        document.getElementById("modalMinOrder").textContent = `Minimum Order: ${product.minimumOrderQuantity}`;
+        document.getElementById("modalDimensions").textContent =
+            `Dimensions: ${product.dimensions.width} x ${product.dimensions.height} x ${product.dimensions.depth}`;
+        document.getElementById("modalCartBtn").setAttribute("data-id", product.id);
+        document.getElementById("modalWishlistBtn").setAttribute("data-id", product.id);
+
+        // نعرض المودال
+        productModal.show();
+      });
+    });
+}
 
 // عند تغيير الاختيار
 selectTag.addEventListener("change", () => {
     if (selectTag.value) loadProducts(selectTag.value);
+});
+
+document.addEventListener("hidden.bs.modal", (event) => {
+  document.body.classList.remove("modal-open");
+  document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
 });
 
 // أول تحميل
